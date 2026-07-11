@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caixa - Arraiá São João</title>
+    <style>
+        :root {
+            --bg-color: #fcf8f2;
+            --primary-color: #e65c00;
+            --primary-light: #ff8e42;
+            --secondary-color: #ffb300;
+            --dark-color: #4a2306;
+            --border-color: #e0d3c1;
+            --card-bg: #ffffff;
+            --category-bg: #f5ede2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--dark-color);
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* Container padrão (Mobile First) */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(74, 35, 6, 0.08);
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        /* Bandeirinhas decorativas */
+        .flags-container {
+            display: flex;
+            justify-content: space-around;
+            margin: -20px -20px 16px -20px;
+            padding-top: 6px;
+            background: #fff8f0;
+            border-bottom: 2px dashed var(--border-color);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .flag {
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 20px solid var(--primary-color);
+            flex-shrink: 0;
+        }
+        .flag:nth-child(even) { border-top-color: var(--secondary-color); }
+        .flag:nth-child(3n) { border-top-color: #4caf50; }
+        .flag:nth-child(4n) { border-top-color: #2196f3; }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            color: var(--primary-color);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #7c624d;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        /* Estrutura Base Mobile */
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: var(--category-bg);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Cartões de Item (Padrão Mobile) */
+        .item-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #faf6f0;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .item-info {
+            flex: 1;
+            padding-right: 8px;
+        }
+
+        .item-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--dark-color);
+            line-height: 1.2;
+        }
+
+        .item-price {
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+        .counter-control {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-count {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 6px rgba(230, 92, 0, 0.2);
+            touch-action: manipulation;
+        }
+
+        .btn-count:active {
+            transform: scale(0.95);
+            background: var(--primary-light);
+        }
+
+        /* Responsividade dos Ícones dos Botões */
+        .icon-svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            transition: transform 0.1s ease;
+        }
+
+        .count-value {
+            font-size: 18px;
+            font-weight: 700;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* Sidebar / Checkout Base */
+        .checkout-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-summary-container {
+            background: #fdfaf5;
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .summary-title {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--dark-color);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .header-icon {
+            width: 1.2em;
+            height: 1.2em;
+            stroke: currentColor;
+            vertical-align: middle;
+        }
+
+        .order-summary-list {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .order-summary-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #f0e6da;
+            padding-bottom: 8px;
+        }
+
+        .order-summary-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .summary-item-qty {
+            font-weight: 800;
+            color: white;
+            background-color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 6px;
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        .summary-item-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .summary-item-subtotal {
+            font-weight: 700;
+            color: #7c624d;
+        }
+
+        .summary-box {
+            background: var(--dark-color);
+            color: white;
+            padding: 18px;
+            border-radius: 18px;
+            box-shadow: 0 6px 16px rgba(74, 35, 6, 0.15);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .summary-total {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--secondary-color);
+        }
+
+        .change-section {
+            background: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .change-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .input-group span {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #7c624d;
+        }
+
+        .input-money {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--dark-color);
+            background: white;
+            outline: none;
+            transition: border-color 0.2s;
+            -moz-appearance: textfield;
+        }
+
+        .input-money::-webkit-outer-spin-button,
+        .input-money::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-money:focus {
+            border-color: var(--primary-color);
+        }
+
+        .change-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .change-label {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .change-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4caf50;
+        }
+        
+        .change-value.negative {
+            color: #f44336;
+        }
+
+        .btn-clear {
+            width: 100%;
+            padding: 14px;
+            background: #f0e6da;
+            border: none;
+            border-radius: 14px;
+            color: var(--dark-color);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+        
+        .btn-clear:active {
+            background: #e2d3c1;
+        }
+
+        /* =========================================
+           MEDIA QUERIES - RESPONSIVIDADE (Desktop Otimizado)
+           ========================================= */
+
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .app-container { max-width: 720px; }
+            .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+            .category-column { background: #fdfaf5; border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; }
+        }
+
+        @media (min-width: 1024px) {
+            body { 
+                padding: 8px; 
+                align-items: center;
+            }
+            
+            .app-container {
+                max-width: 1140px;
+                padding: 12px 20px; 
+            }
+
+            .flags-container {
+                margin: -12px -20px 10px -20px;
+                padding-top: 6px;
+            }
+
+            .flag {
+                border-left: 12px solid transparent;
+                border-right: 12px solid transparent;
+                border-top: 16px solid var(--primary-color);
+            }
+
+            header { margin-bottom: 12px; }
+            header h1 { font-size: 24px; }
+            header p { font-size: 13px; margin-top: 0; }
+
+            .app-layout {
+                display: grid;
+                grid-template-columns: 1fr 290px;
+                gap: 16px;
+                align-items: start;
+            }
+
+            /* Distribuição inteligente de categorias */
+            .menu-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto auto;
+                gap: 12px;
+            }
+
+            .category-column {
+                background: #fdfaf5;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 10px;
+                height: fit-content;
+            }
+
+            /* Organização visual equilibrada das colunas */
+            .category-column:nth-child(1) { grid-column: 1; grid-row: 1 / span 2; }
+            .category-column:nth-child(2) { grid-column: 2; grid-row: 1 / span 2; }
+            .category-column:nth-child(3) { grid-column: 3; grid-row: 1; }
+            .category-column:nth-child(4) { grid-column: 3; grid-row: 2; }
+
+            .category-title {
+                margin-bottom: 6px;
+                padding: 4px;
+                font-size: 12px;
+            }
+
+            .items-list { gap: 5px; }
+
+            .item-card {
+                flex-direction: row; 
+                align-items: center;
+                justify-content: space-between;
+                padding: 6px 10px;
+                background: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+                border: 1px solid #f0e6da;
+            }
+
+            .item-info {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding-right: 4px;
+            }
+
+            .item-name { font-size: 13px; line-height: 1.1; margin-bottom: 2px;}
+            .item-price { font-size: 12px; }
+
+            .counter-control {
+                background: var(--category-bg);
+                border-radius: 6px;
+                padding: 2px;
+                gap: 6px;
+            }
+
+            .btn-count {
+                width: 24px;
+                height: 24px;
+                border-radius: 4px;
+                box-shadow: none;
+            }
+
+            .icon-svg {
+                width: 11px;
+                height: 11px;
+            }
+
+            .count-value { width: 20px; font-size: 14px; }
+
+            .checkout-sidebar {
+                position: sticky;
+                top: 12px;
+                gap: 12px;
+            }
+
+            .order-summary-container { 
+                padding: 10px; 
+                max-height: 25vh; 
+            }
+            .summary-title { margin-bottom: 6px; font-size: 13px; padding-bottom: 6px; }
+            .order-summary-list li { margin-bottom: 4px; padding-bottom: 4px; font-size: 13px; }
+
+            .summary-box { padding: 14px; border-radius: 12px; }
+            .summary-row { flex-direction: column; gap: 2px; }
+            .summary-total { font-size: 32px; }
+            
+            .change-section { padding: 12px; border: 2px solid var(--border-color); background: #ffffff; border-radius: 12px; }
+            .change-title { margin-bottom: 8px; font-size: 13px; }
+            .input-group { margin-bottom: 8px; }
+            .input-money { font-size: 16px; padding: 8px 8px 8px 36px; background: #fdfaf5; border-radius: 8px; }
+            .change-result { padding-top: 8px; }
+            .change-label { font-size: 14px; }
+            .change-value { font-size: 22px; }
+            
+            .btn-clear { padding: 10px; font-size: 14px; border-radius: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="flags-container">
+            <div class="flag"></div><div class="flag"></div><div class="flag"></div><div class="flag"></div>
+            <div class="flag"></div><div class="flag"></div><div class="flag"></div><div class="flag"></div>
+            <div class="flag"></div><div class="flag"></div><div class="flag"></div><div class="flag"></div>
+            <div class="flag"></div><div class="flag"></div><div class="flag"></div><div class="flag"></div>
+        </div>
+
+        <header>
+            <h1>Arraiá São João</h1>
+            <p>Escola Estadual do Campo São João - Festa Julina</p>
+        </header>
+
+        <div class="app-layout">
+            <main class="menu-grid" id="items-list">
+                </main>
+
+            <aside class="checkout-sidebar">
+                
+                <div class="order-summary-container" id="order-summary-container">
+                    <div class="summary-title">
+                        <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Resumo do Pedido
+                    </div>
+                    <ul class="order-summary-list" id="order-summary-list">
+                        </ul>
+                </div>
+
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span class="summary-label">TOTAL A PAGAR</span>
+                        <span class="summary-total" id="total-display">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <div class="change-section">
+                    <div class="change-title">
+                        <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line></svg>
+                        Calculadora de Troco
+                    </div>
+                    <div class="input-group">
+                        <span>R$</span>
+                        <input type="number" step="0.01" inputmode="decimal" placeholder="Valor pago" class="input-money" id="amount-paid" oninput="calculateChange()">
+                    </div>
+                    <div class="change-result">
+                        <span class="change-label" id="change-label">Troco:</span>
+                        <span class="change-value" id="change-display">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <button class="btn-clear" onclick="clearAll()">Zerar Pedido</button>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Dados extraídos diretamente da imagem da Escola Estadual do Campo São João
+        const menuData = [
+            {
+                category: "Salgados",
+                items: [
+                    { id: 'cachorro_quente', name: 'Cachorro-Quente', price: 8.00 },
+                    { id: 'espeto_carne', name: 'Espeto de Carne', price: 8.00 },
+                    { id: 'pipoca', name: 'Pipoca', price: 2.00 }
+                ]
+            },
+            {
+                category: "Doces e Sobremesas",
+                items: [
+                    { id: 'maca_amor', name: 'Maçã do Amor', price: 8.00 },
+                    { id: 'algodao_doce', name: 'Algodão-Doce', price: 5.00 },
+                    { id: 'cocada', name: 'Cocada', price: 8.00 },
+                    { id: 'pudim', name: 'Pudim', price: 8.00 }
+                ]
+            },
+            {
+                category: "Bebidas",
+                items: [
+                    { id: 'coca_cola', name: 'Coca-Cola Lata', price: 6.00 },
+                    { id: 'quentao', name: 'Quentão', price: 5.00 },
+                    { id: 'agua', name: 'Água', price: 3.00 }
+                ]
+            },
+            {
+                category: "Diversão / Brincadeiras",
+                items: [
+                    { id: 'pescaria', name: 'Pescaria', price: 5.00 },
+                    { id: 'pula_pula', name: 'Pula Pula', price: 5.00 },
+                    { id: 'argola', name: 'Argola', price: 10.00 }
+                ]
+            }
+        ];
+
+        const cart = {};
+        const productMap = {};
+
+        menuData.forEach(cat => {
+            cat.items.forEach(item => {
+                cart[item.id] = 0;
+                productMap[item.id] = item;
+            });
+        });
+
+        let totalOrder = 0;
+
+        function renderMenu() {
+            const container = document.getElementById('items-list');
+            container.innerHTML = '';
+
+            menuData.forEach(cat => {
+                const col = document.createElement('div');
+                col.className = 'category-column';
+
+                const title = document.createElement('div');
+                title.className = 'category-title';
+                title.innerText = cat.category;
+                col.appendChild(title);
+
+                const itemsDiv = document.createElement('div');
+                itemsDiv.className = 'items-list';
+
+                cat.items.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${product.name}</div>
+                            <div class="item-price">R$ ${product.price.toFixed(2).replace('.', ',')}</div>
+                        </div>
+                        <div class="counter-control">
+                            <button class="btn-count" onclick="updateQuantity('${product.id}', -1)" aria-label="Remover">
+                                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                            <span class="count-value" id="count-${product.id}">0</span>
+                            <button class="btn-count" onclick="updateQuantity('${product.id}', 1)" aria-label="Adicionar">
+                                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            </button>
+                        </div>
+                    `;
+                    itemsDiv.appendChild(card);
+                });
+
+                col.appendChild(itemsDiv);
+                container.appendChild(col);
+            });
+        }
+
+        function updateQuantity(productId, change) {
+            const currentQty = cart[productId];
+            const newQty = currentQty + change;
+
+            if (newQty >= 0) {
+                cart[productId] = newQty;
+                document.getElementById(`count-${productId}`).innerText = newQty;
+                calculateTotal();
+            }
+        }
+
+        function updateSummary() {
+            const summaryContainer = document.getElementById('order-summary-container');
+            const summaryList = document.getElementById('order-summary-list');
+            summaryList.innerHTML = ''; 
+            
+            let hasItems = false;
+
+            Object.keys(cart).forEach(id => {
+                const qty = cart[id];
+                if (qty > 0) {
+                    hasItems = true;
+                    const product = productMap[id];
+                    const subtotal = qty * product.price;
+
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div>
+                            <span class="summary-item-qty">${qty}x</span>
+                            <span class="summary-item-name">${product.name}</span>
+                        </div>
+                        <span class="summary-item-subtotal">R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+                    `;
+                    summaryList.appendChild(li);
+                }
+            });
+
+            summaryContainer.style.display = hasItems ? 'block' : 'none';
+        }
+
+        function calculateTotal() {
+            totalOrder = Object.keys(cart).reduce((sum, id) => {
+                return sum + (cart[id] * productMap[id].price);
+            }, 0);
+
+            document.getElementById('total-display').innerText = `R$ ${totalOrder.toFixed(2).replace('.', ',')}`;
+            
+            updateSummary();
+            calculateChange();
+        }
+
+        function calculateChange() {
+            const paidInput = document.getElementById('amount-paid');
+            const changeDisplay = document.getElementById('change-display');
+            const changeLabel = document.getElementById('change-label');
+            
+            const amountPaid = parseFloat(paidInput.value) || 0;
+
+            if (amountPaid === 0) {
+                changeDisplay.innerText = "R$ 0,00";
+                changeDisplay.className = "change-value";
+                changeLabel.innerText = "Troco:";
+                return;
+            }
+
+            const change = amountPaid - totalOrder;
+
+            if (change < 0) {
+                changeLabel.innerText = "Falta:";
+                changeDisplay.innerText = `R$ ${Math.abs(change).toFixed(2).replace('.', ',')}`;
+                changeDisplay.className = "change-value negative";
+            } else {
+                changeLabel.innerText = "Troco:";
+                changeDisplay.innerText = `R$ ${change.toFixed(2).replace('.', ',')}`;
+                changeDisplay.className = "change-value";
+            }
+        }
+
+        function clearAll() {
+            Object.keys(cart).forEach(id => {
+                cart[id] = 0;
+                document.getElementById(`count-${id}`).innerText = 0;
+            });
+            document.getElementById('amount-paid').value = '';
+            calculateTotal(); 
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Atalho F5 exclusivo para desktop para resetar rápido o caixa
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F5') {
+                event.preventDefault();
+                clearAll();
+            }
+        });
+
+        window.onload = renderMenu;
+    </script>
+</body>
+</html>
